@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>110 Kitchen</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #CC1212;
+    --cream: #F5F0E8;
+    --text: #CC1212;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Archivo', sans-serif;
+    color: var(--red);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Vertical text on right side */
+  .side-title {
+    position: fixed;
+    right: -10px;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .side-title span {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(60px, 9vw, 110px);
+    color: var(--red);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    letter-spacing: -2px;
+    line-height: 0.85;
+    user-select: none;
+  }
+
+  .main {
+    padding: 40px 40px 120px 40px;
+    max-width: 700px;
+  }
+
+  /* MENU title */
+  .menu-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(56px, 10vw, 90px);
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 40px;
+    letter-spacing: -1px;
+  }
+
+  /* Section headers */
+  .section {
+    margin-bottom: 48px;
+  }
+
+  .section-header {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 22px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Column headers for veg */
+  .col-headers {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    margin-bottom: 6px;
+    padding-right: 120px;
+  }
+
+  /* Menu items */
+  .item {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s, transform 0.1s;
+    margin-bottom: 2px;
+    font-size: 16px;
+    padding-right: 120px;
+  }
+
+  .item:hover {
+    background: rgba(204, 18, 18, 0.1);
+    transform: translateX(4px);
+  }
+
+  .item:active {
+    transform: scale(0.98);
+  }
+
+  .item-name { font-weight: 400; }
+  .item-price { font-weight: 500; }
+
+  /* Non-veg items: name | price | qty */
+  .item-nonveg {
+    grid-template-columns: 1fr 90px 1fr;
+    padding-right: 120px;
+  }
+
+  /* Juices: name | price */
+  .item-juice {
+    grid-template-columns: 1fr 100px;
+    padding-right: 120px;
+  }
+
+  .item-qty {
+    font-size: 14px;
+    opacity: 0.8;
+    align-self: center;
+  }
+
+  /* WhatsApp tap hint */
+  .tap-hint {
+    font-size: 12px;
+    color: rgba(204,18,18,0.5);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  /* Bottom banner */
+  .bottom-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--cream);
+    padding: 16px 24px;
+    z-index: 20;
+    border-top: 3px solid var(--red);
+  }
+
+  .bottom-banner p {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(22px, 5vw, 42px);
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    -webkit-text-stroke: 1.5px var(--red);
+    /* Outline style like image */
+    -webkit-text-fill-color: transparent;
+    paint-order: stroke fill;
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--red);
+    color: var(--cream);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    z-index: 100;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (max-width: 600px) {
+    .main { padding: 30px 20px 120px 20px; }
+    .item, .col-headers { padding-right: 60px; }
+    .side-title span { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="side-title">
+  <span>110 KITCHEN</span>
+</div>
+
+<div class="main">
+  <div class="menu-title">MENU</div>
+  <p class="tap-hint">👆 Tap any item to order on WhatsApp</p>
+
+  <!-- VEG SECTION -->
+  <div class="section">
+    <div class="section-header">Veg 🥦</div>
+    <div class="col-headers">
+      <span></span>
+      <span>150g</span>
+      <span>250g</span>
+    </div>
+
+    <div class="item" onclick="orderItem('French Fries (150g) - ₹65')">
+      <span class="item-name">French fries</span>
+      <span class="item-price">₹65</span>
+      <span class="item-price">₹85</span>
+    </div>
+    <div class="item" onclick="orderItem('French Fries (250g) - ₹85')">
+      <span class="item-name" style="opacity:0"></span>
+      <span class="item-price" style="opacity:0">₹65</span>
+      <span class="item-price" style="text-decoration:underline;cursor:pointer">₹85 →</span>
+    </div>
+
+    <div class="item" onclick="orderItem('Peri Peri French Fries (150g) - ₹80')">
+      <span class="item-name">Peri peri french fries</span>
+      <span class="item-price">₹80</span>
+      <span class="item-price">₹100</span>
+    </div>
+    <div class="item" onclick="orderItem('Sweet Corn (150g) - ₹50')">
+      <span class="item-name">Sweet corn</span>
+      <span class="item-price">₹50</span>
+      <span class="item-price">₹70</span>
+    </div>
+    <div class="item" onclick="orderItem('Masala Corn (150g) - ₹65')">
+      <span class="item-name">Masala corn</span>
+      <span class="item-price">₹65</span>
+      <span class="item-price">₹90</span>
+    </div>
+    <div class="item" onclick="orderItem('Paneer Tikka (150g) - ₹119')">
+      <span class="item-name">Panner tikka</span>
+      <span class="item-price">₹119</span>
+      <span class="item-price">₹159</span>
+    </div>
+    <div class="item" onclick="orderItem('Aloo Tikki (150g) - ₹75')">
+      <span class="item-name">Aloo tikki</span>
+      <span class="item-price">₹75</span>
+      <span class="item-price">₹110</span>
+    </div>
+    <div class="item" onclick="orderItem('Cheese Shots (150g) - ₹85')">
+      <span class="item-name">Cheese shots</span>
+      <span class="item-price">₹85</span>
+      <span class="item-price">₹115</span>
+    </div>
+  </div>
+
+  <!-- NON VEG SECTION -->
+  <div class="section">
+    <div class="section-header">Non veg 🍗</div>
+
+    <div class="item item-nonveg" onclick="orderItem('Peri Peri Chicken - ₹169 (250g)')">
+      <span class="item-name">Peri peri chicken</span>
+      <span class="item-price">₹169</span>
+      <span class="item-qty">(250grms)</span>
+    </div>
+    <div class="item item-nonveg" onclick="orderItem('Chicken Tandoori - ₹169 (250g)')">
+      <span class="item-name">Chicken tandoori</span>
+      <span class="item-price">₹169</span>
+      <span class="item-qty">(250 grms)</span>
+    </div>
+    <div class="item item-nonveg" onclick="orderItem('Boiled Egg - ₹12 (1 egg)')">
+      <span class="item-name">Boiled egg</span>
+      <span class="item-price">₹12</span>
+      <span class="item-qty">(1 egg)</span>
+    </div>
+    <div class="item item-nonveg" onclick="orderItem('Masala Fried Boiled Egg - ₹20 (1 egg)')">
+      <span class="item-name">Masala fried boiled egg</span>
+      <span class="item-price">₹20</span>
+      <span class="item-qty">(1 egg)</span>
+    </div>
+    <div class="item item-nonveg" onclick="orderItem('Full Fry Apollo Fish - ₹350 (300g boneless)')">
+      <span class="item-name">Full fry Apollo fish</span>
+      <span class="item-price">₹350</span>
+      <span class="item-qty">(300grms boneless)</span>
+    </div>
+    <div class="item item-nonveg" onclick="orderItem('Normal Fish Fry - ₹350 (500g)')">
+      <span class="item-name">Normal fish fry</span>
+      <span class="item-price">₹350</span>
+      <span class="item-qty">(500grms)</span>
+    </div>
+  </div>
+
+  <!-- JUICES SECTION -->
+  <div class="section">
+    <div class="section-header">Juices (200ml) 🥤</div>
+
+    <div class="item item-juice" onclick="orderItem('Watermelon Juice (200ml) - ₹70')">
+      <span class="item-name">Watermelon</span>
+      <span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="orderItem('Muskmelon Juice (200ml) - ₹70')">
+      <span class="item-name">Muskmelon</span>
+      <span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="orderItem('Pineapple Juice (200ml) - ₹70')">
+      <span class="item-name">Pineapple</span>
+      <span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="orderItem('Apple Juice (200ml) - ₹70')">
+      <span class="item-name">Apple</span>
+      <span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="orderItem('Strawberry Juice (200ml) - ₹70')">
+      <span class="item-name">Strawberry</span>
+      <span class="item-price">₹70</span>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-banner">
+  <p>AIR FRIED. NOT OIL FRIED.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function orderItem(itemName) {
+    const phone = '918977077107';
+    const msg = encodeURIComponent(`Hi! I'd like to order: ${itemName}`);
+    const url = `https://wa.me/${phone}?text=${msg}`;
+    window.open(url, '_blank');
+
+    // Show toast
+    const toast = document.getElementById('toast');
+    toast.textContent = `Opening WhatsApp for ${itemName.split(' - ')[0]}...`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // Make each row with two prices clickable independently
+  // Simplify: clicking anywhere on a veg row opens size picker
+  // Actually let's make the two price columns separately clickable for veg
+  document.querySelectorAll('.item').forEach(item => {
+    // Already handled via onclick
+  });
+</script>
+
+<!-- Fix: Make veg items show size selection -->
+<script>
+  // Override veg items to pick size
+  const vegItems = [
+    { name: 'French Fries', p150: 65, p250: 85 },
+    { name: 'Peri Peri French Fries', p150: 80, p250: 100 },
+    { name: 'Sweet Corn', p150: 50, p250: 70 },
+    { name: 'Masala Corn', p150: 65, p250: 90 },
+    { name: 'Paneer Tikka', p150: 119, p250: 159 },
+    { name: 'Aloo Tikki', p150: 75, p250: 110 },
+    { name: 'Cheese Shots', p150: 85, p250: 115 },
+  ];
+
+  // Re-render veg section cleanly
+  const vegSection = document.querySelector('.section');
+  // Clear old items (keep header and col-headers)
+  const oldItems = vegSection.querySelectorAll('.item');
+  oldItems.forEach(i => i.remove());
+
+  vegItems.forEach(item => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:1fr 100px 100px;padding:10px 14px;cursor:pointer;border-radius:6px;transition:background 0.15s,transform 0.1s;margin-bottom:2px;font-size:16px;padding-right:120px;';
+
+    const name = document.createElement('span');
+    name.textContent = item.name;
+
+    const p150 = document.createElement('span');
+    p150.textContent = `₹${item.p150}`;
+    p150.style.cssText = 'font-weight:500;cursor:pointer;padding:4px 8px;border-radius:4px;transition:background 0.15s;';
+    p150.addEventListener('mouseenter', () => p150.style.background = 'rgba(204,18,18,0.15)');
+    p150.addEventListener('mouseleave', () => p150.style.background = '');
+    p150.addEventListener('click', (e) => { e.stopPropagation(); orderItem(`${item.name} (150g) - ₹${item.p150}`); });
+
+    const p250 = document.createElement('span');
+    p250.textContent = `₹${item.p250}`;
+    p250.style.cssText = 'font-weight:500;cursor:pointer;padding:4px 8px;border-radius:4px;transition:background 0.15s;';
+    p250.addEventListener('mouseenter', () => p250.style.background = 'rgba(204,18,18,0.15)');
+    p250.addEventListener('mouseleave', () => p250.style.background = '');
+    p250.addEventListener('click', (e) => { e.stopPropagation(); orderItem(`${item.name} (250g) - ₹${item.p250}`); });
+
+    row.appendChild(name);
+    row.appendChild(p150);
+    row.appendChild(p250);
+
+    row.addEventListener('mouseenter', () => row.style.background = 'rgba(204,18,18,0.08)');
+    row.addEventListener('mouseleave', () => row.style.background = '');
+    row.addEventListener('click', () => orderItem(`${item.name} - ₹${item.p150} (150g)`));
+
+    vegSection.appendChild(row);
+  });
+</script>
+
+</body>
+</html>
