@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>110 Kitchen</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #CC1212;
+    --cream: #F5F0E8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--cream);
+    font-family: 'Archivo', sans-serif;
+    color: var(--red);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE GRAIN ─── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9000;
+    opacity: 0.5;
+  }
+
+  /* ─── CURTAIN ─── */
+  .curtain {
+    position: fixed; inset: 0;
+    background: var(--red);
+    z-index: 9999;
+    transform-origin: top;
+    animation: curtainDrop 1.1s cubic-bezier(0.77,0,0.175,1) 0.1s forwards;
+  }
+  @keyframes curtainDrop {
+    0%   { transform: scaleY(1); }
+    100% { transform: scaleY(0); }
+  }
+
+  /* ─── PARALLAX SCENE ─── */
+  .scene {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  /* ── LAYER: deepest background watermark ── */
+  .layer-deep {
+    position: absolute;
+    inset: -15%;
+    will-change: transform;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bg-watermark {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(280px, 40vw, 500px);
+    color: var(--red);
+    opacity: 0.032;
+    white-space: nowrap;
+    letter-spacing: -10px;
+    user-select: none;
+    line-height: 1;
+    transform: rotate(-12deg);
+  }
+
+  /* ── LAYER: mid — floating geometric shapes ── */
+  .layer-mid {
+    position: absolute;
+    inset: -20%;
+    will-change: transform;
+  }
+
+  .geo {
+    position: absolute;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    opacity: 0;
+    animation: geoFadeIn 1s ease forwards;
+  }
+
+  @keyframes geoFadeIn {
+    to { opacity: 1; }
+  }
+
+  .geo-1 {
+    width: 320px; height: 320px;
+    top: 8%; left: 60%;
+    opacity: 0;
+    animation: geoFadeIn 0.9s ease 1.3s forwards;
+    border-color: rgba(204,18,18,0.07);
+  }
+  .geo-2 {
+    width: 180px; height: 180px;
+    top: 45%; left: 5%;
+    opacity: 0;
+    animation: geoFadeIn 0.9s ease 1.5s forwards;
+    border-color: rgba(204,18,18,0.055);
+    border-radius: 0;
+    transform: rotate(22deg);
+  }
+  .geo-3 {
+    width: 90px; height: 90px;
+    top: 70%; left: 72%;
+    opacity: 0;
+    animation: geoFadeIn 0.9s ease 1.7s forwards;
+    border-color: rgba(204,18,18,0.08);
+  }
+  .geo-4 {
+    width: 500px; height: 500px;
+    top: 30%; left: -10%;
+    opacity: 0;
+    animation: geoFadeIn 0.9s ease 1.2s forwards;
+    border-color: rgba(204,18,18,0.03);
+  }
+  .geo-5 {
+    width: 50px; height: 50px;
+    top: 15%; left: 30%;
+    opacity: 0;
+    animation: geoFadeIn 0.9s ease 1.9s forwards;
+    border-color: rgba(204,18,18,0.1);
+    border-radius: 0;
+    transform: rotate(45deg);
+  }
+
+  /* ── Floating dots ── */
+  .dot {
+    position: absolute;
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    opacity: 0;
+    animation: geoFadeIn 0.6s ease forwards;
+  }
+  .dot-1 { top: 22%; left: 55%; animation-delay: 1.6s; opacity: 0.12; }
+  .dot-2 { top: 58%; left: 80%; animation-delay: 1.8s; opacity: 0.09; }
+  .dot-3 { top: 80%; left: 40%; animation-delay: 2.0s; opacity: 0.07; }
+  .dot-4 { top: 10%; left: 80%; animation-delay: 1.4s; opacity: 0.11; }
+  .dot-5 { top: 40%; left: 18%; animation-delay: 2.1s; opacity: 0.08; width:10px; height:10px; }
+
+  /* ── LAYER: near — large outline text that drifts most ── */
+  .layer-near {
+    position: absolute;
+    inset: -20%;
+    will-change: transform;
+  }
+
+  .near-text {
+    position: absolute;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(80px, 14vw, 160px);
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(204,18,18,0.06);
+    white-space: nowrap;
+    user-select: none;
+    letter-spacing: -3px;
+  }
+
+  .near-text-1 { bottom: 12%; right: -2%; transform: rotate(-4deg); }
+  .near-text-2 { top: 5%;    left: -1%;  transform: rotate(3deg); font-size: clamp(40px, 6vw, 70px); opacity: 0.7; }
+
+  /* ─── SCROLL PROGRESS ─── */
+  .progress-line {
+    position: fixed; top: 0; left: 0;
+    height: 3px; background: var(--red);
+    width: 0%; z-index: 8000;
+    transition: width 0.08s linear;
+  }
+
+  /* ─── SIDE TITLE (own parallax layer) ─── */
+  .side-title {
+    position: fixed;
+    right: -8px; top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .side-title span {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(58px, 9vw, 108px);
+    color: var(--red);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    letter-spacing: -2px;
+    line-height: 0.85;
+    user-select: none;
+    opacity: 0;
+    animation: fadeSlideLeft 0.8s ease 1s forwards;
+  }
+
+  @keyframes fadeSlideLeft {
+    from { opacity: 0; transform: rotate(180deg) translateY(-20px); }
+    to   { opacity: 1; transform: rotate(180deg) translateY(0); }
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  .main {
+    padding: 40px 40px 150px 40px;
+    max-width: 700px;
+    position: relative;
+    z-index: 100;
+    will-change: transform;
+  }
+
+  /* ─── MENU TITLE ─── */
+  .menu-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(72px, 14vw, 130px);
+    color: var(--red);
+    line-height: 0.92;
+    margin-bottom: 36px;
+    letter-spacing: -3px;
+    position: relative;
+    opacity: 0;
+    animation: titleReveal 0.7s ease 1.1s forwards;
+    cursor: default;
+  }
+
+  @keyframes titleReveal {
+    from { opacity: 0; transform: translateY(30px) skewY(3deg); }
+    to   { opacity: 1; transform: translateY(0) skewY(0); }
+  }
+
+  /* glitch */
+  .menu-title::before,
+  .menu-title::after {
+    content: 'MENU';
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+  }
+  .menu-title::before { color: #00ffff; mix-blend-mode: multiply; }
+  .menu-title::after  { color: #ff00ff; mix-blend-mode: multiply; }
+  .menu-title:hover::before { animation: glitch1 0.4s steps(2) infinite; }
+  .menu-title:hover::after  { animation: glitch2 0.4s steps(2) infinite; }
+
+  @keyframes glitch1 {
+    0%   { opacity:0.6; transform: translate(-3px, 1px) skewX(-5deg); }
+    50%  { opacity:0.4; transform: translate(3px, -1px) skewX(3deg); clip-path: inset(30% 0 40% 0); }
+    100% { opacity:0.6; transform: translate(-2px, 2px); clip-path: inset(60% 0 10% 0); }
+  }
+  @keyframes glitch2 {
+    0%   { opacity:0.5; transform: translate(3px, -1px) skewX(5deg); }
+    50%  { opacity:0.3; transform: translate(-2px, 2px); clip-path: inset(50% 0 20% 0); }
+    100% { opacity:0.5; transform: translate(2px, 1px) skewX(-3deg); clip-path: inset(10% 0 60% 0); }
+  }
+
+  .tap-hint {
+    font-size: 12px;
+    color: rgba(204,18,18,0.45);
+    margin-bottom: 24px;
+    font-style: italic;
+    opacity: 0;
+    animation: fadeIn 0.6s ease 1.4s forwards;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { margin-bottom: 52px; }
+
+  .section-header {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 22px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    padding-bottom: 10px;
+  }
+
+  .section-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--red);
+    transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .section-header.line-in::after { width: 100%; }
+
+  .col-headers {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-right: 120px;
+    opacity: 0.4;
+  }
+
+  /* ─── ITEMS ─── */
+  .item {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px;
+    padding: 11px 14px;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-bottom: 3px;
+    font-size: 16px;
+    padding-right: 120px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateX(-16px);
+    /* 3D card tilt */
+    transform-style: preserve-3d;
+    transition: box-shadow 0.25s ease;
+  }
+
+  .item.revealed {
+    animation: itemSlideIn 0.45s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  @keyframes itemSlideIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* liquid fill */
+  .item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    border-radius: 6px;
+    z-index: 0;
+  }
+
+  .item:hover::before { transform: scaleX(1); }
+  .item:hover         { color: var(--cream); box-shadow: 4px 6px 20px rgba(204,18,18,0.2); }
+  .item > *           { position: relative; z-index: 1; }
+  .item:active        { transform: scale(0.985) !important; }
+
+  .item-name  { font-weight: 400; align-self: center; }
+  .item-price { font-weight: 600; align-self: center; }
+
+  .item-nonveg { grid-template-columns: 1fr 90px 1fr; padding-right: 120px; }
+  .item-juice  { grid-template-columns: 1fr 100px;    padding-right: 120px; }
+
+  .item-qty {
+    font-size: 13px;
+    opacity: 0.7;
+    align-self: center;
+  }
+
+  /* ─── BOTTOM BANNER ─── */
+  .bottom-banner {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--cream);
+    padding: 12px 0;
+    z-index: 6000;
+    border-top: 3px solid var(--red);
+    overflow: hidden;
+  }
+
+  .banner-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 16s linear infinite;
+  }
+
+  .banner-track span {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(18px, 3.5vw, 34px);
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    -webkit-text-stroke: 1.5px var(--red);
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+    padding-right: 56px;
+  }
+
+  @keyframes marquee {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* ─── GYRO PERMISSION BUTTON ─── */
+  .gyro-btn {
+    position: fixed;
+    top: 16px; right: 16px;
+    z-index: 7000;
+    background: transparent;
+    border: 1.5px solid rgba(204,18,18,0.3);
+    border-radius: 30px;
+    color: var(--red);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s, border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .gyro-btn.visible    { opacity: 1; }
+  .gyro-btn.hidden-btn { display: none; }
+  .gyro-btn:hover      { border-color: var(--red); background: rgba(204,18,18,0.06); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed;
+    bottom: 88px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--red); color: var(--cream);
+    padding: 11px 22px;
+    border-radius: 40px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none;
+    z-index: 8500;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(245,240,232,0.5);
+    backdrop-filter: blur(14px) saturate(1.5);
+    -webkit-backdrop-filter: blur(14px) saturate(1.5);
+    z-index: 8000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.28s ease;
+  }
+
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--cream);
+    border: 3px solid var(--red);
+    border-radius: 16px;
+    padding: 38px 34px 30px;
+    width: min(420px, 90vw);
+    transform: translateY(40px) scale(0.93) rotateX(8deg);
+    transform-origin: top center;
+    perspective: 900px;
+    transition: transform 0.4s cubic-bezier(0.34,1.4,0.64,1), opacity 0.28s ease;
+    opacity: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .modal::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: var(--red);
+    border-radius: 16px 0 0 16px;
+  }
+
+  .modal-overlay.active .modal {
+    transform: translateY(0) scale(1) rotateX(0);
+    opacity: 1;
+  }
+
+  .modal-item-label {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 10px; letter-spacing: 4px;
+    text-transform: uppercase; opacity: 0.38;
+    margin-bottom: 6px;
+  }
+
+  .modal-item-name {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(20px, 5vw, 28px);
+    line-height: 1.1; margin-bottom: 26px;
+    min-height: 34px;
+  }
+
+  .modal-divider { height: 1.5px; background: var(--red); opacity: 0.1; margin-bottom: 22px; }
+
+  .modal-room-label {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 10px; letter-spacing: 4px;
+    text-transform: uppercase; margin-bottom: 12px; opacity: 0.55;
+  }
+
+  .room-input {
+    width: 100%;
+    border: 2.5px solid rgba(204,18,18,0.35);
+    border-radius: 10px;
+    background: transparent;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 40px; color: var(--red);
+    padding: 14px 16px; outline: none;
+    letter-spacing: 10px; text-align: center;
+    transition: border-color 0.2s, box-shadow 0.25s;
+    caret-color: var(--red);
+  }
+
+  .room-input::placeholder { opacity: 0.18; letter-spacing: 6px; }
+  .room-input:focus { border-color: var(--red); box-shadow: 0 0 0 5px rgba(204,18,18,0.1); }
+
+  .room-input.error { animation: shake 0.38s ease; border-color: var(--red); }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    15%  { transform: translateX(-9px); }
+    35%  { transform: translateX(8px); }
+    55%  { transform: translateX(-6px); }
+    75%  { transform: translateX(5px); }
+  }
+
+  .room-error-msg {
+    font-size: 11px; color: var(--red);
+    opacity: 0; margin-top: 7px;
+    text-align: center; transition: opacity 0.2s;
+    font-style: italic; min-height: 16px; letter-spacing: 0.5px;
+  }
+  .room-error-msg.visible { opacity: 0.6; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+
+  .btn-cancel {
+    flex: 0 0 auto; padding: 15px 20px;
+    background: transparent;
+    border: 2px solid rgba(204,18,18,0.22);
+    border-radius: 10px; color: var(--red);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 12px; letter-spacing: 1.5px;
+    cursor: pointer; text-transform: uppercase;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+  }
+  .btn-cancel:hover { border-color: var(--red); background: rgba(204,18,18,0.06); }
+  .btn-cancel:active { transform: scale(0.96); }
+
+  .btn-order {
+    flex: 1; padding: 15px 18px;
+    background: var(--red); border: 2px solid var(--red);
+    border-radius: 10px; color: var(--cream);
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px; letter-spacing: 1.5px;
+    cursor: pointer; text-transform: uppercase;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    position: relative; overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+
+  .btn-order::before {
+    content: ''; position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50%;
+    transform: translate(-50%,-50%);
+    transition: width 0.5s ease, height 0.5s ease;
+  }
+
+  .btn-order:hover { transform: scale(1.03); box-shadow: 0 6px 24px rgba(204,18,18,0.35); }
+  .btn-order:hover::before { width: 300px; height: 300px; }
+  .btn-order:active { transform: scale(0.97); }
+
+  .wa-icon { width: 18px; height: 18px; fill: var(--cream); flex-shrink: 0; position: relative; z-index: 1; }
+  .btn-order span { position: relative; z-index: 1; }
+
+  /* ─── RIPPLE ─── */
+  .ripple {
+    position: absolute; border-radius: 50%;
+    background: rgba(245,240,232,0.35);
+    transform: scale(0);
+    animation: rippleOut 0.6s linear forwards;
+    pointer-events: none; z-index: 2;
+  }
+
+  @keyframes rippleOut { to { transform: scale(4); opacity: 0; } }
+  @keyframes fadeIn    { to { opacity: 1; } }
+
+  @media (max-width: 600px) {
+    .main { padding: 28px 18px 150px 18px; }
+    .item, .col-headers { padding-right: 60px; }
+    .side-title span { font-size: 54px; }
+    .modal { padding: 28px 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="curtain"></div>
+<div class="progress-line" id="progressLine"></div>
+
+<!-- ─── PARALLAX SCENE ─── -->
+<div class="scene" id="scene" aria-hidden="true">
+
+  <!-- Layer 1: Deep background watermark (slowest) -->
+  <div class="layer-deep" id="layerDeep">
+    <div class="bg-watermark">110</div>
+  </div>
+
+  <!-- Layer 2: Mid floating shapes -->
+  <div class="layer-mid" id="layerMid">
+    <div class="geo geo-1"></div>
+    <div class="geo geo-2"></div>
+    <div class="geo geo-3"></div>
+    <div class="geo geo-4"></div>
+    <div class="geo geo-5"></div>
+    <div class="dot dot-1"></div>
+    <div class="dot dot-2"></div>
+    <div class="dot dot-3"></div>
+    <div class="dot dot-4"></div>
+    <div class="dot dot-5"></div>
+  </div>
+
+  <!-- Layer 3: Near text outlines (fastest bg layer) -->
+  <div class="layer-near" id="layerNear">
+    <div class="near-text near-text-1">KITCHEN</div>
+    <div class="near-text near-text-2">AIR FRIED</div>
+  </div>
+
+</div>
+
+<!-- iOS gyro permission button -->
+<button class="gyro-btn" id="gyroBtn" onclick="requestGyro()">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--red)">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+  </svg>
+  Enable 3D
+</button>
+
+<!-- Side title (its own parallax element) -->
+<div class="side-title" id="sideTitle">
+  <span>110 KITCHEN</span>
+</div>
+
+<!-- ─── MAIN CONTENT ─── -->
+<div class="main" id="mainContent">
+  <div class="menu-title">MENU</div>
+  <p class="tap-hint">👆 Tap any item to order on WhatsApp</p>
+
+  <!-- VEG -->
+  <div class="section" id="vegSection">
+    <div class="section-header">Veg 🥦</div>
+    <div class="col-headers">
+      <span></span><span>150g</span><span>250g</span>
+    </div>
+  </div>
+
+  <!-- NON VEG -->
+  <div class="section" id="nonVegSection">
+    <div class="section-header">Non veg 🍗</div>
+    <div class="item item-nonveg" onclick="handleItemClick(event,'Peri Peri Chicken - ₹169 (250g)')">
+      <span class="item-name">Peri peri chicken</span>
+      <span class="item-price">₹169</span>
+      <span class="item-qty">(250g)</span>
+    </div>
+    <div class="item item-nonveg" onclick="handleItemClick(event,'Chicken Tandoori - ₹169 (250g)')">
+      <span class="item-name">Chicken tandoori</span>
+      <span class="item-price">₹169</span>
+      <span class="item-qty">(250g)</span>
+    </div>
+    <div class="item item-nonveg" onclick="handleItemClick(event,'Boiled Egg - ₹12 (1 egg)')">
+      <span class="item-name">Boiled egg</span>
+      <span class="item-price">₹12</span>
+      <span class="item-qty">(1 egg)</span>
+    </div>
+    <div class="item item-nonveg" onclick="handleItemClick(event,'Masala Fried Boiled Egg - ₹20 (1 egg)')">
+      <span class="item-name">Masala fried boiled egg</span>
+      <span class="item-price">₹20</span>
+      <span class="item-qty">(1 egg)</span>
+    </div>
+    <div class="item item-nonveg" onclick="handleItemClick(event,'Full Fry Apollo Fish - ₹350 (300g boneless)')">
+      <span class="item-name">Full fry Apollo fish</span>
+      <span class="item-price">₹350</span>
+      <span class="item-qty">(300g boneless)</span>
+    </div>
+    <div class="item item-nonveg" onclick="handleItemClick(event,'Normal Fish Fry - ₹350 (500g)')">
+      <span class="item-name">Normal fish fry</span>
+      <span class="item-price">₹350</span>
+      <span class="item-qty">(500g)</span>
+    </div>
+  </div>
+
+  <!-- JUICES -->
+  <div class="section" id="juiceSection">
+    <div class="section-header">Juices (200ml) 🥤</div>
+    <div class="item item-juice" onclick="handleItemClick(event,'Watermelon Juice (200ml) - ₹70')">
+      <span class="item-name">Watermelon</span><span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="handleItemClick(event,'Muskmelon Juice (200ml) - ₹70')">
+      <span class="item-name">Muskmelon</span><span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="handleItemClick(event,'Pineapple Juice (200ml) - ₹70')">
+      <span class="item-name">Pineapple</span><span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="handleItemClick(event,'Apple Juice (200ml) - ₹70')">
+      <span class="item-name">Apple</span><span class="item-price">₹70</span>
+    </div>
+    <div class="item item-juice" onclick="handleItemClick(event,'Strawberry Juice (200ml) - ₹70')">
+      <span class="item-name">Strawberry</span><span class="item-price">₹70</span>
+    </div>
+  </div>
+</div>
+
+<!-- Marquee banner -->
+<div class="bottom-banner">
+  <div class="banner-track">
+    <span>AIR FRIED. NOT OIL FRIED.</span>
+    <span>AIR FRIED. NOT OIL FRIED.</span>
+    <span>AIR FRIED. NOT OIL FRIED.</span>
+    <span>AIR FRIED. NOT OIL FRIED.</span>
+    <span>AIR FRIED. NOT OIL FRIED.</span>
+    <span>AIR FRIED. NOT OIL FRIED.</span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── MODAL ── -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-item-label">Your Order</div>
+    <div class="modal-item-name" id="modalItemName">—</div>
+    <div class="modal-divider"></div>
+    <div class="modal-room-label">🚪 &nbsp;Room Number</div>
+    <input class="room-input" id="roomInput" type="tel" inputmode="numeric"
+      maxlength="4" placeholder="101" autocomplete="off" onkeydown="handleRoomKey(event)"/>
+    <div class="room-error-msg" id="roomError">Please enter your room number</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-order" onclick="confirmOrder()">
+        <svg class="wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <span>Order Now</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   SPATIAL 3D PARALLAX ENGINE
+   ─ Works with mouse on desktop
+   ─ Works with gyroscope on mobile
+   ═══════════════════════════════════════════════ */
+
+const layerDeep    = document.getElementById('layerDeep');
+const layerMid     = document.getElementById('layerMid');
+const layerNear    = document.getElementById('layerNear');
+const sideTitle    = document.getElementById('sideTitle');
+const mainContent  = document.getElementById('mainContent');
+const gyroBtn      = document.getElementById('gyroBtn');
+
+// Current & target tilt values (normalized -1 to +1)
+let targetX = 0, targetY = 0;
+let currentX = 0, currentY = 0;
+
+// Parallax depth multipliers for each layer (px shift at full tilt)
+const DEPTH = {
+  deep:    { x: 18,  y: 12  },   // slowest — feels furthest
+  mid:     { x: 32,  y: 22  },   // medium depth
+  near:    { x: 52,  y: 36  },   // fast — feels closest bg
+  side:    { x: 70,  y: 14  },   // side title drifts horizontally most
+  content: { x: 8,   y: 5   },   // content barely moves (keeps readable)
+};
+
+// Smooth lerp factor (lower = smoother/lazier like Apple)
+const LERP = 0.06;
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function applyParallax() {
+  currentX = lerp(currentX, targetX, LERP);
+  currentY = lerp(currentY, targetY, LERP);
+
+  const cx = currentX, cy = currentY;
+
+  layerDeep.style.transform   = `translate(${cx * DEPTH.deep.x}px, ${cy * DEPTH.deep.y}px)`;
+  layerMid.style.transform    = `translate(${cx * DEPTH.mid.x}px,  ${cy * DEPTH.mid.y}px)`;
+  layerNear.style.transform   = `translate(${cx * DEPTH.near.x}px, ${cy * DEPTH.near.y}px)`;
+  sideTitle.style.transform   = `translateX(${cx * DEPTH.side.x}px) translateY(${cy * DEPTH.side.y}px)`;
+  mainContent.style.transform = `translate(${cx * DEPTH.content.x}px, ${cy * DEPTH.content.y}px)`;
+
+  requestAnimationFrame(applyParallax);
+}
+
+requestAnimationFrame(applyParallax);
+
+/* ── MOUSE PARALLAX (desktop) ── */
+let isGyroActive = false;
+
+document.addEventListener('mousemove', (e) => {
+  if (isGyroActive) return;
+  // Normalize to -1 … +1 from viewport center
+  targetX = (e.clientX / window.innerWidth  - 0.5) * 2;
+  targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+document.addEventListener('mouseleave', () => {
+  if (isGyroActive) return;
+  targetX = 0;
+  targetY = 0;
+});
+
+/* ── GYROSCOPE (mobile) ── */
+function startGyro() {
+  window.addEventListener('deviceorientation', (e) => {
+    // gamma = left/right tilt (-90 to 90)
+    // beta  = front/back tilt (-180 to 180, we care about ±45)
+    const rawX = (e.gamma || 0) / 35;  // normalize
+    const rawY = ((e.beta  || 0) - 30) / 35; // offset 30° for natural hold angle
+
+    targetX = Math.max(-1, Math.min(1, rawX));
+    targetY = Math.max(-1, Math.min(1, rawY));
+  }, true);
+
+  isGyroActive = true;
+  gyroBtn.classList.add('hidden-btn');
+}
+
+// iOS 13+ requires user gesture to request permission
+async function requestGyro() {
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      const perm = await DeviceOrientationEvent.requestPermission();
+      if (perm === 'granted') startGyro();
+    } catch(e) { console.log('Gyro permission denied'); }
+  } else {
+    // Android / other browsers — just start
+    startGyro();
+  }
+}
+
+// Auto-start on Android (no permission needed)
+// Show button only on iOS
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const hasGyro = window.DeviceOrientationEvent;
+
+if (hasGyro && !isIOS) {
+  // Android: auto-start
+  setTimeout(startGyro, 1200);
+} else if (hasGyro && isIOS) {
+  // iOS: show permission button after load
+  setTimeout(() => gyroBtn.classList.add('visible'), 1800);
+}
+
+/* ═══════════════════════════════════════════════
+   ITEM 3D CARD TILT ON HOVER
+   ═══════════════════════════════════════════════ */
+document.addEventListener('mousemove', (e) => {
+  const el = e.target.closest('.item');
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width  - 0.5; // -0.5 to 0.5
+  const y = (e.clientY - rect.top)  / rect.height - 0.5;
+  el.style.transform = `perspective(400px) rotateY(${x * 8}deg) rotateX(${-y * 5}deg) scale(1.01)`;
+});
+
+document.addEventListener('mouseleave', (e) => {
+  const el = e.target.closest && e.target.closest('.item');
+  if (el) el.style.transform = '';
+}, true);
+
+document.querySelectorAll('.item').forEach(el => {
+  el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+});
+
+/* ═══════════════════════════════════════════════
+   REST OF APP LOGIC
+   ═══════════════════════════════════════════════ */
+
+/* Scroll progress */
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progressLine');
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  el.style.width = pct + '%';
+});
+
+/* Ripple */
+function spawnRipple(e, target) {
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const rect = target.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height) * 1.5;
+  r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+  target.appendChild(r);
+  setTimeout(() => r.remove(), 700);
+}
+
+function handleItemClick(e, itemName) {
+  spawnRipple(e, e.currentTarget);
+  setTimeout(() => openModal(itemName), 80);
+}
+
+/* Modal */
+let pendingItem = null;
+
+function openModal(itemName) {
+  pendingItem = itemName;
+  document.getElementById('modalItemName').textContent = itemName.split(' - ')[0];
+  document.getElementById('roomInput').value = '';
+  document.getElementById('roomError').classList.remove('visible');
+  document.getElementById('roomInput').classList.remove('error');
+  document.getElementById('modalOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('roomInput').focus(), 340);
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  pendingItem = null;
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function handleRoomKey(e) {
+  if (e.key === 'Enter')  confirmOrder();
+  if (e.key === 'Escape') closeModal();
+}
+
+function confirmOrder() {
+  const room  = document.getElementById('roomInput').value.trim();
+  const input = document.getElementById('roomInput');
+  const errEl = document.getElementById('roomError');
+
+  if (!room) {
+    input.classList.add('error');
+    errEl.classList.add('visible');
+    input.focus();
+    setTimeout(() => input.classList.remove('error'), 420);
+    return;
+  }
+
+  errEl.classList.remove('visible');
+  const phone = '918977077107';
+  const msg   = encodeURIComponent(`Hi! I'd like to order: ${pendingItem}\nRoom number: ${room}`);
+  window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+  closeModal();
+
+  const toast = document.getElementById('toast');
+  toast.textContent = `Order sent for Room ${room} 🎉`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+/* Build veg section */
+const vegItems = [
+  { name:'French Fries',           p150:65,  p250:85  },
+  { name:'Peri Peri French Fries', p150:80,  p250:100 },
+  { name:'Sweet Corn',             p150:50,  p250:70  },
+  { name:'Masala Corn',            p150:65,  p250:90  },
+  { name:'Paneer Tikka',           p150:119, p250:159 },
+  { name:'Aloo Tikki',             p150:75,  p250:110 },
+  { name:'Cheese Shots',           p150:85,  p250:115 },
+];
+
+const vegSection = document.getElementById('vegSection');
+
+vegItems.forEach(item => {
+  const row = document.createElement('div');
+  row.className = 'item';
+  row.style.gridTemplateColumns = '1fr 100px 100px';
+  row.style.paddingRight = '120px';
+
+  const name = document.createElement('span');
+  name.className = 'item-name';
+  name.textContent = item.name;
+
+  const p150 = document.createElement('span');
+  p150.className = 'item-price';
+  p150.textContent = `₹${item.p150}`;
+  p150.style.cursor = 'pointer';
+  p150.addEventListener('click', e => {
+    e.stopPropagation();
+    spawnRipple(e, row);
+    setTimeout(() => openModal(`${item.name} (150g) - ₹${item.p150}`), 80);
+  });
+
+  const p250 = document.createElement('span');
+  p250.className = 'item-price';
+  p250.textContent = `₹${item.p250}`;
+  p250.style.cursor = 'pointer';
+  p250.addEventListener('click', e => {
+    e.stopPropagation();
+    spawnRipple(e, row);
+    setTimeout(() => openModal(`${item.name} (250g) - ₹${item.p250}`), 80);
+  });
+
+  row.appendChild(name);
+  row.appendChild(p150);
+  row.appendChild(p250);
+
+  row.addEventListener('click', e => {
+    if (e.target === row || e.target === name) {
+      spawnRipple(e, row);
+      setTimeout(() => openModal(`${item.name} (150g) - ₹${item.p150}`), 80);
+    }
+  });
+  row.addEventListener('mouseleave', () => { row.style.transform = ''; });
+
+  vegSection.appendChild(row);
+});
+
+/* Intersection observer: stagger + section lines */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const header = entry.target.querySelector('.section-header');
+    if (header) setTimeout(() => header.classList.add('line-in'), 100);
+    const items = entry.target.querySelectorAll('.item');
+    items.forEach((item, i) => setTimeout(() => item.classList.add('revealed'), 120 + i * 55));
+    io.unobserve(entry.target);
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.section').forEach(s => io.observe(s));
+</script>
+
+</body>
+</html>
